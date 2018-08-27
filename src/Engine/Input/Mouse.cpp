@@ -322,14 +322,13 @@ void Mouse::onRawMove(int xDelta, int yDelta, bool absolute, bool virtualDesktop
 			double long countsPerCm = (double)convar->getConVarByName("fposu_mouse_dpi")->getInt()/2.54;
 			double long cmPer360 = convar->getConVarByName("fposu_mouse_cm_360")->getFloat();
 			double long countsPer360 = cmPer360*countsPerCm;
-			double long multiplier = 360.0/countsPer360;//*0.975;
+			double long multiplier = 360.0/countsPer360;
 
 			Vector2 y = Vector2(xDelta, yDelta)*multiplier - *kahanC;
 			Vector2 t = m_vRawDeltaActual + y;
 			*kahanC = (t - m_vRawDeltaActual) - y;
 			m_vRawDeltaActual = t;
 
-			//m_vRawDeltaActual += Vector2(xDelta, yDelta)*multiplier;
 		}
 		else // tablet
 			m_vRawDeltaActual = Vector2(xDelta, yDelta);

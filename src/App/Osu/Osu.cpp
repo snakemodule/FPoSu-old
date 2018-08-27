@@ -412,63 +412,6 @@ Osu::Osu()
 
 
 
-	/*float dist = -fposu_distance.getFloat();
-	circumlength = 0;
-	VertexPair vp1 = VertexPair(Vector3(-0.5,0.5,dist),Vector3(-0.5,-0.5, dist), 0);
-	VertexPair vp2 = VertexPair(Vector3(0.5,0.5, dist),Vector3(0.5,-0.5, dist), 1);
-	edgeDistance = Vector3(0,0,0).distance(Vector3(-0.5,0.0,dist));
-	meshList.push_back(vp1);
-	meshList.push_back(vp2);
-	std::list<VertexPair>::iterator begin = meshList.begin();
-	std::list<VertexPair>::iterator end = meshList.end();
-	--end;
-	subdivide(meshList, begin, end, subdivisions);
-
-	//debugLog("circumlength: %f \n", circumlength);
-
-	begin = meshList.begin();
-	std::list<VertexPair>::iterator next = ++meshList.begin();
-	while(next != meshList.end()) {
-		Vector3 topLeft = (*begin).a;
-		Vector3 bottomLeft = (*begin).b;
-		Vector3 topRight = (*next).a;
-		Vector3 bottomRight = (*next).b;
-		float leftTC = (*begin).textureCoordinate;
-		float rightTC = (*next).textureCoordinate;
-		float topTC = 1;
-		float bottomTC = 0;
-
-		arrayObject.addVertex(topLeft);
-		arrayObject.addTexcoord(leftTC, topTC);
-		arrayObject.addVertex(topRight);
-		arrayObject.addTexcoord(rightTC, topTC);
-		arrayObject.addVertex(bottomLeft);
-		arrayObject.addTexcoord(leftTC, bottomTC);
-
-		arrayObject.addVertex(bottomLeft);
-		arrayObject.addTexcoord(leftTC, bottomTC);
-		arrayObject.addVertex(topRight);
-		arrayObject.addTexcoord(rightTC, topTC);
-		arrayObject.addVertex(bottomRight);
-		arrayObject.addTexcoord(rightTC, bottomTC);
-
-		(*begin).normal = NormalFromTriangle(topLeft, topRight, bottomLeft);
-
-
-		begin++;
-		next++;
-	}
-
-
-
-	camera = new Camera(Vector3(0,0,0),Vector3(0,0,-1),103.0f);
-	camera->setFov(103.0f);
-	float aspect = m_backBuffer->getHeight() / m_backBuffer->getWidth();
-	modelMatrix = Matrix4().translate(0, 0, 0).scale(1, aspect*(circumlength), 1);//-fposu_distance.getFloat() scale(2, 2*aspect, 1)
-	projectionMatrix = Camera::buildMatrixPerspectiveFov(deg2rad(fposu_fov.getFloat()),
-				((float) engine->getScreenWidth())/((float) engine->getScreenHeight()),
-				0.1f, 10.0f);*/
-
 	angleImage = (OpenGLImage*)engine->getResourceManager()->loadImage("45px.png", "45px", false);
 	angleImage->setWrapMode(Graphics::WRAP_MODE::WRAP_MODE_REPEAT);
 	angleImage->setFilterMode(Graphics::FILTER_MODE::FILTER_MODE_NONE);
@@ -636,20 +579,13 @@ void Osu::draw(Graphics *g)
 		m_backBuffer->disable();
 
 		// draw screen
-		//projectionMatrix = Camera::buildMatrixPerspectiveFov(deg2rad(fposu_fov.getFloat()),
-		//			((float)getScreenWidth())/((float)getScreenHeight()),
-		//			0.05f, 50.0f);
 		projectionMatrix = Camera::buildMatrixPerspectiveFovHorizontal(deg2rad(fposu_fov.getFloat()), ((float)getScreenHeight()/(float)getScreenWidth()), 0.05f, 50.0f);
 		viewMatrix = Camera::buildMatrixLookAt(camera->getPos(), camera->getViewDirection(), camera->getViewUp());
-		//viewMatrix = Camera::buildMatrixLookAt(MyCameraPosition, MyCameraPosition+MyCameraDirection, MyCameraUp);
-		//  debugLog("%f %f %f \n", MyCameraDirection.x, MyCameraDirection.y, MyCameraDirection.z);
 		Matrix4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 		Matrix4 vp = projectionMatrix * viewMatrix;
 		m_shaderGenericTextured->enable();
 		{
 
-
-			//clownbil cirkel
 			/*angleImage->bind();
 			{
 				g->setColor(0xffffffff);
@@ -682,61 +618,8 @@ void Osu::draw(Graphics *g)
 		}
 		m_shaderGenericTextured->disable();
 
-		/*int face=0;
-		m_shaderGenericUntextured->enable();
-		{
-			m_shaderGenericUntextured->setUniformMatrix4fv("matrix", mvp);
-
-
-			m_backBuffer->bind();
-			std::list<VertexPair>::iterator begin = meshList.begin();
-			std::list<VertexPair>::iterator next = ++meshList.begin();
-			while(next != meshList.end()) {
-				if(face == currentIntersectingFace){
-					m_shaderGenericUntextured->setUniform4f("color", 1.0f, 0.0f, 0.0f, 1.0f);
-					//debugLog("face:%i\n", face);
-				}
-				else {
-					m_shaderGenericUntextured->setUniform4f("color", 1.0f, 1.0f, 0.0f, 1.0f);
-				}
-				Vector3 topLeft = (*begin).a;
-				Vector3 bottomLeft = (*begin).b;
-				Vector3 topRight = (*next).a;
-				Vector3 bottomRight = (*next).b;
-				float leftTC = (*begin).textureCoordinate;
-				float rightTC = (*next).textureCoordinate;
-				float topTC = 1;
-				float bottomTC = 0;
-
-				VertexArrayObject temp;
-				temp.addVertex(topLeft);
-				temp.addTexcoord(leftTC, topTC);
-				temp.addVertex(topRight);
-				temp.addTexcoord(rightTC, topTC);
-				temp.addVertex(bottomLeft);
-				temp.addTexcoord(leftTC, bottomTC);
-
-				temp.addVertex(bottomLeft);
-				temp.addTexcoord(leftTC, bottomTC);
-				temp.addVertex(topRight);
-				temp.addTexcoord(rightTC, topTC);
-				temp.addVertex(bottomRight);
-				temp.addTexcoord(rightTC, bottomTC);
-
-				g->drawVAO(&temp);
-				begin++;
-				next++;
-				face++;
-			}
-			m_backBuffer->unbind();
-		}
-		m_shaderGenericUntextured->disable();*/
-
-
 		if (allowDrawCursor && beatmapStd != NULL)
 			m_hud->drawCursor(g, Vector2((float)getScreenWidth(), (float)getScreenHeight())/2, osu_mod_fadingcursor.getBool() ? fadingCursorAlpha : 1.0f);
-		//engine->getScreenSize()/2;
-
 
 		m_hud->draw(g);
 	}
@@ -801,75 +684,22 @@ void Osu::update()
 
 	if (isInPlayMode()) {
 
-		//float aspect = m_backBuffer->getHeight() / m_backBuffer->getWidth();
 
 		camera->rotateX(-engine->getMouse()->getRawDelta().x);
 		camera->rotateY(-engine->getMouse()->getRawDelta().y);
 
-		/*float xRotateAngle = -engine->getMouse()->getRawDelta().x;
-		float yRotateAngle = engine->getMouse()->getRawDelta().y;
-		pitch+=yRotateAngle;
-		if (pitch > 89.8f) {
-			pitch = 89.8f;
-			yRotateAngle = 0;
-		}
-		else if (pitch < -89.8f)
-		{
-			pitch = -89.8f;
-			yRotateAngle = 0;
-		}
 
-		yaw+=xRotateAngle;
-		if (yaw > 360.0f)
-			yaw = yaw - 360.0f;
-		else if (yaw < 0.0f)
-			yaw = 360.0f + yaw;
-
-
-		a.fromAxis(MyCameraLeft, yRotateAngle);
-		b.fromAxis(Vector3(0,1,0), xRotateAngle);
-		q = a*b;
-
-		Matrix4 mouseRotation = Matrix4().rotateY(xRotateAngle).rotate(yRotateAngle, MyCameraLeft);
-		MyCameraDirection = mouseRotation*MyCameraDirection;
-		MyCameraLeft = mouseRotation*MyCameraLeft;
-		MyCameraUp = mouseRotation*MyCameraUp;
-
-
-
-
-		Vector3 forwarddirection = Vector3(MyCameraDirection.x, 0, MyCameraDirection.z).normalize();
-		Vector3 cumulativeDirection;
-		if(!(movingBackward && movingForward)) {
-			if (movingBackward)
-				cumulativeDirection += forwarddirection;
-			if (movingForward)
-				cumulativeDirection -= forwarddirection;
-		}
-		if (!(movingLeft && movingRight)) {
-			if (movingLeft)
-				cumulativeDirection -= MyCameraLeft;
-			if (movingRight)
-				cumulativeDirection += MyCameraLeft;
-		}
-		cumulativeDirection.normalize();
-		MyCameraPosition += cumulativeDirection*-5.5*(float)engine->getFrameTime();
-		*/
-
-		//float virtualScreenPlaneIntersectionDistance = 0.0f;
 		std::list<VertexPair>::iterator begin = meshList.begin();
 		std::list<VertexPair>::iterator next = ++meshList.begin();
 		int face = 0;
-		//debugLog("enter loop \n");
 		while(!screenIntersection && next != meshList.end())
 		{
 
 			Vector4 topLeft = (modelMatrix * Vector4(	(*begin).a.x, 	(*begin).a.y, 	(*begin).a.z, 1));
 			Vector4 right = (modelMatrix * Vector4(		(*next).a.x, 	(*next).a.y, 	(*next).a.z, 1));
 			Vector4 down = (modelMatrix * Vector4(		(*begin).b.x, 	(*begin).b.y, 	(*begin).b.z, 1));
-			Vector3 normal = (modelMatrix * (*begin).normal).normalize();
+			//Vector3 normal = (modelMatrix * (*begin).normal).normalize();
 
-			//after model transformation
 			Vector3 TopLeft = Vector3(topLeft.x, topLeft.y, topLeft.z);
 			Vector3 Right = Vector3(right.x, right.y, right.z);
 			Vector3 Down = Vector3(down.x, down.y, down.z);
@@ -891,13 +721,12 @@ void Osu::update()
 			if(abs(calculatedNormal.dot(intersectionPoint-TopLeft)) < 1e-6f) {
 				float  u = (intersectionPoint-TopLeft).dot(Right-TopLeft);
 				float v = (intersectionPoint-TopLeft).dot(Down-TopLeft);
-				if(u >= 0 && u <= (Right-TopLeft).dot(Right-TopLeft)) { //*(Right-TopLeft).length()
-					if(v >= 0 && v <= (Down-TopLeft).dot(Down-TopLeft)) {		//*(Down-TopLeft).length()
+				if(u >= 0 && u <= (Right-TopLeft).dot(Right-TopLeft)) {
+					if(v >= 0 && v <= (Down-TopLeft).dot(Down-TopLeft)) {
 						float rightLength = (Right-TopLeft).length();
 						float downLength = (Down-TopLeft).length();
 						float x=u/(rightLength*rightLength);
 						float y=v/(downLength*downLength);
-						//debugLog("v\n");
 						float distancePerFace = engine->getScreenWidth()/pow(2,subdivisions);
 						float distanceInFace = distancePerFace*x;
 						Vector2 newMousePos = Vector2((distancePerFace*face)+distanceInFace,
@@ -1199,7 +1028,7 @@ void Osu::onKeyDown(KeyboardEvent &key)
 		// while playing and not paused
 		if (!getSelectedBeatmap()->isPaused())
 		{
-			if (key == (KEYCODE)OsuKeyBindings::MOVE_FORWARD.getInt()) {
+			/*if (key == (KEYCODE)OsuKeyBindings::MOVE_FORWARD.getInt()) {
 				movingForward = true;
 				key.consume();
 			} else if (key == (KEYCODE)OsuKeyBindings::MOVE_BACKWARD.getInt()) {
@@ -1211,7 +1040,7 @@ void Osu::onKeyDown(KeyboardEvent &key)
 			} else if (key == (KEYCODE)OsuKeyBindings::MOVE_RIGHT.getInt()) {
 				movingRight = true;
 				key.consume();
-			}
+			}*/
 
 			getSelectedBeatmap()->onKeyDown(key);
 
@@ -2084,8 +1913,6 @@ void Osu::subdivide(std::list<VertexPair> meshList, const std::list<VertexPair>:
 	bottom.y = (*begin).b.y;
 	float tc = lerp<float>((*begin).textureCoordinate, (*end).textureCoordinate, 0.5);
 	VertexPair newVP = VertexPair(top, bottom, tc);
-	//debugLog("New VP: %f \n", newVP.a.distance(Vector3(0,0,0)));
-	//std::cout << "New VP: " << newVP.a.distance(Vector3(0,0,0)) <<"\n";
 	std::list<VertexPair>::iterator newPos = meshList.insert(end,newVP);
 	if(n > 1) {
 		subdivide(meshList, begin, newPos, n-1, edgeDistance);
@@ -2113,8 +1940,6 @@ Vector3 Osu::NormalFromTriangle(Vector3 p1, Vector3 p2, Vector3 p3) {
 void Osu::makePlayfield() {
 	float dist = -fposu_distance.getFloat();
 	circumlength = 0;
-	//VertexPair vp1 = VertexPair(Vector3(-0.5,0.5,dist),Vector3(-0.5,-0.5, dist), 0);
-	//VertexPair vp2 = VertexPair(Vector3(0.5,0.5, dist),Vector3(0.5,-0.5, dist), 1);
 	VertexPair vp1 = VertexPair(Vector3(-0.5,0.5,dist),Vector3(-0.5,-0.5, dist), 0);
 	VertexPair vp2 = VertexPair(Vector3(0.5,0.5, dist),Vector3(0.5,-0.5, dist), 1);
 	float edgeDistance = Vector3(0,0,0).distance(Vector3(-0.5,0.0,dist));
@@ -2125,8 +1950,6 @@ void Osu::makePlayfield() {
 	std::list<VertexPair>::iterator end = meshList.end();
 	--end;
 	subdivide(meshList, begin, end, subdivisions, edgeDistance);
-
-	//debugLog("circumlength: %f \n", circumlength);
 
 	arrayObject.clear();
 	begin = meshList.begin();
@@ -2165,13 +1988,9 @@ void Osu::makePlayfield() {
 
 
 	camera = new Camera(Vector3(0,0,0),Vector3(0,0,-1),103.0f);
-	//camera->setType(Camera::CAMERA_TYPE_FIRST_PERSON);
 	camera->setFov(103.0f);
 	float aspect = m_backBuffer->getHeight() / m_backBuffer->getWidth();
-	modelMatrix = Matrix4().translate(0, 0, 0).scale(1, aspect*(circumlength), 1);//-fposu_distance.getFloat() scale(2, 2*aspect, 1)
-	//projectionMatrix = Camera::buildMatrixPerspectiveFov(deg2rad(fposu_fov.getFloat()),
-	//			((float) engine->getScreenWidth())/((float) engine->getScreenHeight()),
-	//			0.05f, 100.0f);
+	modelMatrix = Matrix4().translate(0, 0, 0).scale(1, aspect*(circumlength), 1);
 }
 
 void Osu::makeAngleCircle() {
